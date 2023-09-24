@@ -2,7 +2,11 @@
 
 namespace src\Classes;
 
-class Main {
+use src\Classes\Model\Transaction;
+use src\Classes\Model\User;
+
+
+class BankingApp {
     private $users = [];
     private $transactions = [];
 

@@ -4,7 +4,7 @@
 namespace src\Classes\Model;
 
 
-class Transection {
+class Transaction {
     private $senderEmail;
     private $receiverEmail;
     private $amount;

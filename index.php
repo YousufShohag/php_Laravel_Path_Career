@@ -1,16 +1,15 @@
 <?php
 
-require_once 'vendor/autoload.php';  //@Connecting Autoload USing PS4 Standard
 
-use src\Classes\Model\Transection;   //!Added For Transection Class
-use src\Classes\Model\User;  //!Added For User Class
+require_once 'vendor/autoload.php';
 
-use src\Classes\Main;   //!Added For Main Class
 
+use src\Classes\BankingApp;
 
 
 
-$app = new Main(); //?Create a Object for Main Class
+
+$app = new BankingApp();
 
 while (true) {
     echo "Welcome to the Banking App!\n";
@@ -19,21 +18,71 @@ while (true) {
     echo "2. Register\n";
     echo "3. Quit\n";
 
-    $choice = readline("Enter your choice: "); //!Take Input from CLI
+    $user_input = readline("Enter your choice: ");
 
-    switch ($choice) {
+    switch ($user_input) {
         case '1':
             $email = readline("Enter your email: ");
-            $password = readline("Enter your password: "); 
+            $password = readline("Enter your password: ");
 
-            $user = $app->login($email, $password); //TODO: Using Main Class Login Function Here
+            $user = $app->login($email, $password);
 
             if ($user !== null) {
-                echo "Login successful!\n";
-                if ($user->isAdmin()) {
+                 echo "Login successful!\n";
+                 echo "1. Admin\n";
+                 echo "2. Customer\n";
+                 $user_input_choose = readline("Enter your choice: ");
+                 switch ( $user_input_choose){
+                    case '1';
                     echo "Admin menu:\n";
-                    // Implement admin menu logic
-                } else {
+                    while (true) {
+                        echo "1. See all transactions by all users\n";
+                        echo "2. See transactions by a specific user\n";
+                        echo "3. See the list of all customers\n";
+                        echo "4. Logout\n";
+                
+                        $adminChoice = readline("Enter your choice: ");
+                
+                        switch ($adminChoice) {
+                            case '1':
+                                $transactions = $app->viewAllTransactions();
+                                echo "All Transactions:\n";
+                                foreach ($transactions as $transaction) {
+                                    echo "From: " . $transaction->getSenderEmail() . " To: " . $transaction->getReceiverEmail() . " Amount: " . $transaction->getAmount() . "\n";
+                                }
+                                break;
+                
+                            case '2':
+                                $emailToSearch = readline("Enter the user's email to view transactions: ");
+                                $userTransactions = $app->viewTransactionsByUser($emailToSearch);
+                                if (empty($userTransactions)) {
+                                    echo "No transactions found for this user.\n";
+                                } else {
+                                    echo "Transactions for $emailToSearch:\n";
+                                    foreach ($userTransactions as $transaction) {
+                                        echo "From: " . $transaction->getSenderEmail() . " To: " . $transaction->getReceiverEmail() . " Amount: " . $transaction->getAmount() . "\n";
+                                    }
+                                }
+                                break;
+                
+                            case '3':
+                                $customers = $app->getAllCustomers();
+                                echo "List of all customers:\n";
+                                foreach ($customers as $customer) {
+                                    echo "Name: " . $customer->getName() . " Email: " . $customer->getEmail() . "\n";
+                                }
+                                break;
+                
+                            case '4':
+                                echo "Logout successful!\n";
+                                exit(0);
+                
+                            default:
+                                echo "Invalid choice. Please try again.\n";
+                        }
+                    }
+                    break;
+                    case '2';
                     echo "Customer menu:\n";
                     while (true) {
                         echo "1. View Balance\n";
@@ -80,7 +129,7 @@ while (true) {
                                 echo "Invalid choice. Please try again.\n";
                         }
                     }
-                }
+                 }
             } else {
                 echo "Login failed. Please try again.\n";
             }
